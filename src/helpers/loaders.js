@@ -8,7 +8,7 @@ export const getPokemonDetails = async (id) => {
 
 export const fetchPokemons = async () => {
   const results = (
-    await fetch(`https://pokeapi.co/api/v2/pokemon?limit=50`)
+    await fetch(`https://pokeapi.co/api/v2/pokemon?limit=500`)
   ).json();
   console.log("Ran Loader All");
   return results;

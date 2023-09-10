@@ -13,12 +13,14 @@ const App = () => {
         {
           index: true,
           element: <Home />,
-          loader: () => fetchPokemons(),
+          loader: fetchPokemons,
+          shouldRevalidate: () => false,
         },
         {
           path: "pokemon/:pokemonId",
           element: <PokemonDetails />,
           loader: ({ params }) => getPokemonDetails(params.pokemonId),
+          shouldRevalidate: () => false,
         },
       ],
     },
