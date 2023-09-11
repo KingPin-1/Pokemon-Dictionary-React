@@ -1,6 +1,8 @@
-/* eslint-disable react/prop-types */
-import { useLoaderData } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { getPokemonDetails } from "../helpers/loaders";
+import { useParams } from "react-router-dom";
 
+/* eslint-disable react/prop-types */
 const PopulateStats = ({ filteredStats }) => {
   return (
     <section>
@@ -36,7 +38,23 @@ const PopulateAbilities = ({ filteredAbilities }) => {
 };
 
 const PokemonDetails = () => {
-  const { abilities, name, sprites, stats } = useLoaderData();
+  const { pokemonId } = useParams();
+  console.log(pokemonId);
+  const query = useQuery({
+    queryKey: ["pokemons", pokemonId],
+    queryFn: () => getPokemonDetails(pokemonId),
+  });
+  if (query.isLoading) {
+    return <div className="rounded-lg p-8 text-4xl">Loading...</div>;
+  }
+  if (query.isError) {
+    return (
+      <div className="rounded-lg p-8 text-4xl">
+        Error Encountered...{query.error.message}
+      </div>
+    );
+  }
+  const { abilities, name, sprites, stats } = query.data;
   const filteredStats = stats.map((stat) => ({
     name: stat.stat.name,
     base: stat.base_stat,
