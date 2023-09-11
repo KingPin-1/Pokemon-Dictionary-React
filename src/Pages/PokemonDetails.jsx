@@ -39,14 +39,16 @@ const PopulateAbilities = ({ filteredAbilities }) => {
 
 const PokemonDetails = () => {
   const { pokemonId } = useParams();
-  console.log(pokemonId);
+
   const query = useQuery({
     queryKey: ["pokemons", pokemonId],
     queryFn: () => getPokemonDetails(pokemonId),
   });
+
   if (query.isLoading) {
     return <div className="rounded-lg p-8 text-4xl">Loading...</div>;
   }
+
   if (query.isError) {
     return (
       <div className="rounded-lg p-8 text-4xl">
@@ -54,6 +56,7 @@ const PokemonDetails = () => {
       </div>
     );
   }
+
   const { abilities, name, sprites, stats } = query.data;
   const filteredStats = stats.map((stat) => ({
     name: stat.stat.name,
