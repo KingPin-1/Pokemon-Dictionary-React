@@ -42,10 +42,9 @@ const PokemonDetails = () => {
     base: stat.base_stat,
   }));
   const filteredAbilities = abilities.map((item) => item.ability.name);
-  console.log(filteredStats);
   return (
-    <div className="justify-center px-2 py-8 sm:mx-auto sm:flex lg:w-3/4 sm:justify-evenly sm:p-12">
-      <section className="sm:min-h-none mx-auto flex min-h-[calc(100vh-15rem)] w-full flex-col items-center gap-10 max-w-[40%]">
+    <div className="flex flex-col items-center justify-center px-2 py-8 sm:flex-row sm:justify-evenly sm:p-12 lg:mx-auto lg:w-3/4">
+      <section className="sm:min-h-none flex min-h-[calc(100vh-15rem)] w-full flex-col items-center gap-10 sm:max-w-[40%]">
         <h1 className="font-plex text-3xl font-semibold">
           {name.toUpperCase()}
         </h1>
@@ -54,7 +53,7 @@ const PokemonDetails = () => {
           src={sprites.other.dream_world.front_default}
         />
       </section>
-      <section className="flex grow flex-col gap-8 py-4 text-center font-serif text-xl md:max-w-[40%]">
+      <section className="font-serif flex min-w-[350px] flex-col gap-8 py-4 text-center text-xl">
         <PopulateStats filteredStats={filteredStats} />
         <PopulateAbilities filteredAbilities={filteredAbilities} />
       </section>
