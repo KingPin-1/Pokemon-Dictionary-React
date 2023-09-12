@@ -5,9 +5,10 @@ export const getPokemonDetails = async (id) => {
   return results;
 };
 
-export const fetchPokemons = async () => {
-  const results = (
-    await fetch(`https://pokeapi.co/api/v2/pokemon?limit=50`)
-  ).json();
+export const fetchPokemons = async ({
+  pageParam = "https://pokeapi.co/api/v2/pokemon?limit=20",
+}) => {
+  console.log(pageParam, "yahoo");
+  const results = (await fetch(pageParam)).json();
   return results;
 };
