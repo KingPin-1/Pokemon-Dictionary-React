@@ -38,6 +38,7 @@ const PopulateAbilities = ({ filteredAbilities }) => {
 };
 
 const PokemonDetails = () => {
+  window.scrollTo(top);
   const { pokemonId } = useParams();
 
   const query = useQuery({

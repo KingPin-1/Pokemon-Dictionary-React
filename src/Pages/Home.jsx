@@ -1,13 +1,12 @@
 import PokemonCard from "../components/PokemonCard";
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { fetchPokemons } from "../helpers/loaders";
-import { useState } from "react";
 
 const Home = () => {
   const { isLoading, isError, error, data, fetchNextPage, isFetching } =
     useInfiniteQuery({
       queryKey: ["pokemons"],
-      getNextPageParam: (lastPage, allPages) => lastPage.next,
+      getNextPageParam: (lastPage) => lastPage.next,
       queryFn: fetchPokemons,
     });
 
