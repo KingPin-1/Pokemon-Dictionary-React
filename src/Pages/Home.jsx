@@ -2,8 +2,11 @@ import { useEffect, useRef } from "react";
 import PokemonCard from "../components/PokemonCard";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { fetchPokemons } from "../helpers/loaders";
+import { Link, useOutletContext, useNavigate } from "react-router-dom";
 
 const Home = () => {
+  const { toggleSidebar, isMobile } = useOutletContext();
+  const navigate = useNavigate();
   const {
     isLoading,
     isError,
@@ -59,6 +62,14 @@ const Home = () => {
 
   const allPokemons = data?.pages.flatMap((page) => page.results) || [];
 
+  const handlePokemonClick = (pokemonName) => {
+    if (isMobile) {
+      navigate(`pokemon/${pokemonName}`);
+    } else {
+      toggleSidebar(pokemonName);
+    }
+  };
+
   return (
     <div className="relative mx-auto grid w-3/4 grid-cols-1 place-items-center gap-4 py-8 sm:grid-cols-2 md:grid-cols-3 md:gap-8 xl:grid-cols-4 [&>*]:w-full">
       {allPokemons.map((pokemon, index) => {
@@ -66,14 +77,30 @@ const Home = () => {
           .split("/")
           .filter((item) => item != "")
           .at(-1);
+
+        const cardContent = <PokemonCard data={{ id: id, ...pokemon }} />;
+
         if (allPokemons.length === index + 1) {
           return (
-            <div ref={lastPokemonElementRef} key={pokemon.name}>
-              <PokemonCard data={{ id: id, ...pokemon }} />
+            <div
+              ref={lastPokemonElementRef}
+              key={pokemon.name}
+              onClick={() => handlePokemonClick(pokemon.name)}
+              className={isMobile ? "" : "cursor-pointer"}
+            >
+              {isMobile ? <Link to={`pokemon/${pokemon.name}`}>{cardContent}</Link> : cardContent}
             </div>
           );
         } else {
-          return <PokemonCard key={pokemon.name} data={{ id: id, ...pokemon }} />;
+          return (
+            <div
+              key={pokemon.name}
+              onClick={() => handlePokemonClick(pokemon.name)}
+              className={isMobile ? "" : "cursor-pointer"}
+            >
+              {isMobile ? <Link to={`pokemon/${pokemon.name}`}>{cardContent}</Link> : cardContent}
+            </div>
+          );
         }
       })}
       {isFetchingNextPage && (
