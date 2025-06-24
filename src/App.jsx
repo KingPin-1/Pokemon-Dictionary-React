@@ -10,6 +10,14 @@ const AppLayout = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
+  /**
+   * @effect
+   * Handles window resize events to adjust the layout.
+   * Sets `isMobile` state based on window width.
+   * Manages sidebar visibility:
+   * - Opens sidebar on desktop if viewing a Pokemon detail page.
+   * - Closes sidebar if switching to mobile view while it was open.
+   */
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth < 768;
@@ -17,37 +25,56 @@ const AppLayout = () => {
       if (!mobile && location.pathname.includes("/pokemon/")) {
         setIsSidebarOpen(true);
       } else if (mobile && isSidebarOpen) {
-        // If switching to mobile view and sidebar was open, navigate to full page
-        // This scenario might need adjustment based on desired UX
+        // If switching to mobile view and sidebar was open, close it.
+        // The PokemonDetails page will be the main view on mobile.
         setIsSidebarOpen(false);
       }
     };
 
     window.addEventListener("resize", handleResize);
-    handleResize(); // Initial check
+    handleResize(); // Initial check on component mount
 
     return () => window.removeEventListener("resize", handleResize);
-  }, [location.pathname, isSidebarOpen]);
+  }, [location.pathname, isSidebarOpen]); // Reruns if path changes or sidebar state changes.
 
+  /**
+   * @effect
+   * Manages sidebar visibility based on route changes and mobile status.
+   * - Opens sidebar on desktop when navigating to a Pokemon detail page.
+   * - Closes sidebar on mobile if it was conceptually open.
+   * - Closes sidebar if navigating away from a Pokemon detail page on desktop.
+   */
   useEffect(() => {
     if (!isMobile && location.pathname.includes("/pokemon/")) {
       setIsSidebarOpen(true);
     } else if (isMobile && isSidebarOpen) {
-      // If on mobile and sidebar is "conceptually" open, ensure it's rendered as a page
-      // This might involve navigating if the direct route isn't already PokemonDetails
-      setIsSidebarOpen(false); // Sidebar is not a visual element on mobile
+      // On mobile, the sidebar concept isn't used; PokemonDetails is a full page.
+      // Ensure isSidebarOpen is false if user switches to mobile or if it was true.
+      setIsSidebarOpen(false);
     } else if (!location.pathname.includes("/pokemon/")) {
-        setIsSidebarOpen(false);
+      // If not on a pokemon detail path, ensure sidebar is closed.
+      setIsSidebarOpen(false);
     }
-  }, [location.pathname, isMobile, isSidebarOpen]);
+  }, [location.pathname, isMobile, isSidebarOpen]); // Dependencies for this effect.
 
+  /**
+   * Toggles the sidebar visibility or navigates based on the current state.
+   * - If a `pokemonId` is provided, not on mobile, and sidebar is closed:
+   *   navigates to the Pokemon's detail page, which in turn triggers the sidebar.
+   * - If the sidebar is currently open:
+   *   closes the sidebar and navigates to the home page.
+   * @param {string} [pokemonId] - The ID of the Pokemon to display in the sidebar.
+   *                               If undefined, and sidebar is open, it will close the sidebar.
+   */
   const toggleSidebar = (pokemonId) => {
     if (pokemonId && !isSidebarOpen && !isMobile) {
-        navigate(`/pokemon/${pokemonId}`); // This will trigger the sidebar via useEffect
-        setIsSidebarOpen(true);
+        // Navigate to the pokemon's page; useEffect will handle opening the sidebar.
+        navigate(`/pokemon/${pokemonId}`);
+        setIsSidebarOpen(true); // Explicitly set sidebar open
     } else if (isSidebarOpen) {
+        // If sidebar is open, close it and navigate to home.
         setIsSidebarOpen(false);
-        navigate('/'); // Navigate to home when closing sidebar
+        navigate('/');
     }
   };
 
